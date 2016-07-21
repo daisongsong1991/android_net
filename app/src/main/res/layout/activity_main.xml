@@ -16,6 +16,17 @@
     <TextView
         android:id="@+id/mTextViewTest"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center" />
+
+    <Button
+        android:id="@+id/mButtonNet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Test OkHttp" />
+
+    <TextView
+        android:id="@+id/mTextViewContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>
