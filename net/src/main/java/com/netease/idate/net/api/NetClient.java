@@ -7,15 +7,21 @@ import java.util.Map;
  */
 public class NetClient {
 
-    public void get(String url, Map<String, Object> params, NetHandler handler){
-
+    /**
+     * @param url
+     * @param params
+     * @param handler
+     * @return object is use to cancel the request
+     */
+    public Object get(String url, Map<String, Object> params, NetHandler handler) {
+        return null;
     }
 
-    public void post(String url, Map<String, Object> params, NetHandler handler){
-
+    public Object post(String url, Map<String, Object> params, NetHandler handler) {
+        return null;
     }
 
-    public void cancel(){
+    public void cancel(Object tag) {
 
     }
 }

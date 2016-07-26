@@ -18,7 +18,7 @@ public class OkHttpNetClient extends NetClient {
     }
 
     @Override
-    public void get(String url, Map<String, Object> params, NetHandler handler) {
+    public Object get(String url, Map<String, Object> params, NetHandler handler) {
         String requestBody = null;
         if (params != null) {
             StringBuilder sb = new StringBuilder("?");
@@ -34,11 +34,12 @@ public class OkHttpNetClient extends NetClient {
                 .url(fullUrl)
                 .method("GET", null)
                 .build();
-        enqueueRequest(request, handler);
+
+        return enqueueRequest(request, handler);
     }
 
     @Override
-    public void post(String url, Map<String, Object> params, NetHandler handler) {
+    public Object post(String url, Map<String, Object> params, NetHandler handler) {
         if (params == null || params.isEmpty()) {
             throw new RuntimeException("method POST must have Params");
         }
@@ -48,17 +49,17 @@ public class OkHttpNetClient extends NetClient {
 
         }
 
-
         Request request = new Request.Builder()
                 .url(url)
                 .method("POST", body)
                 .build();
-        enqueueRequest(request, handler);
+        return enqueueRequest(request, handler);
     }
 
 
-    private void enqueueRequest(Request request, final NetHandler handler) {
-        mOkHttpClient.newCall(request).enqueue(new Callback() {
+    private Call enqueueRequest(Request request, final NetHandler handler) {
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 handler.onFailure(e.hashCode(), e.getMessage());
@@ -69,5 +70,16 @@ public class OkHttpNetClient extends NetClient {
                 handler.onResponse(response.code(), response.body().bytes());
             }
         });
+        return call;
+    }
+
+    @Override
+    public void cancel(Object tag) {
+        if (tag != null && tag instanceof Call) {
+            Call call = (Call) tag;
+            if (!call.isCanceled()) {
+                call.cancel();
+            }
+        }
     }
 }
