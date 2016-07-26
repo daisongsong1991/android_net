@@ -10,6 +10,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -23,7 +24,7 @@ public class OkHttpNetClient extends NetClient {
     }
 
     @Override
-    public void get(String url, Map<String, Object> params, final NetHandler handler) {
+    public void get(String url, Map<String, Object> params, NetHandler handler) {
         String requestBody = null;
         if (params != null) {
             StringBuilder sb = new StringBuilder("?");
@@ -37,8 +38,30 @@ public class OkHttpNetClient extends NetClient {
                 .url(url + requestBody)
                 .method("GET", null)
                 .build();
+        enqueueRequest(request, handler);
+    }
+
+    @Override
+    public void post(String url, Map<String, Object> params, NetHandler handler) {
+        if (params == null || params.isEmpty()) {
+            throw new RuntimeException("method POST must have Params");
+        }
+
+        RequestBody body = null;
+        for (Map.Entry<String, Object> e : params.entrySet()) {
+            
+        }
 
 
+        Request request = new Request.Builder()
+                .url(url)
+                .method("POST", body)
+                .build();
+        enqueueRequest(request, handler);
+    }
+
+
+    private void enqueueRequest(Request request, final NetHandler handler) {
         mOkHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {

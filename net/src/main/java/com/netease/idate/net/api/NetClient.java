@@ -11,6 +11,10 @@ public class NetClient {
 
     }
 
+    public void post(String url, Map<String, Object> params, NetHandler handler){
+
+    }
+
     public void cancel(){
 
     }
