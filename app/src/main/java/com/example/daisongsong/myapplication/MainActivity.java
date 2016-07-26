@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-
+import com.netease.idate.net.api.NetClient;
+import com.netease.idate.net.api.NetHandler;
+import com.netease.idate.net.okhttp.OkHttpNetClient;
 import com.netease.idate.net.t.Test;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 public class MainActivity extends Activity {
@@ -25,18 +28,33 @@ public class MainActivity extends Activity {
         mTextViewTest.setText(String.format(Locale.CHINA, "10+20=%d", Test.add(10, 20)));
 
         findViewById(R.id.mButtonNet).setOnClickListener(new View.OnClickListener() {
+            private NetClient mNetClient = new OkHttpNetClient();
+
             @Override
             public void onClick(View v) {
-                Test t = new Test();
-                t.testNet(new Test.NetCallback() {
+                mNetClient.get("http://www.163.com", null, new NetHandler() {
                     @Override
-                    public void onSuccess(String s) {
-                        mTextViewContent.setText(s);
+                    public void onResponse(int httpCode, final byte[] body) {
+                        mTextViewContent.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    mTextViewContent.setText(new String(body, "UTF-8"));
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
                     }
 
                     @Override
-                    public void onFailure(String e) {
-                        mTextViewContent.setText(e);
+                    public void onFailure(int httpCode, final String message) {
+                        mTextViewContent.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mTextViewContent.setText(message);
+                            }
+                        });
                     }
                 });
             }

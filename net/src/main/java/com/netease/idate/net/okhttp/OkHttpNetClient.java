@@ -2,16 +2,10 @@ package com.netease.idate.net.okhttp;
 
 import com.netease.idate.net.api.NetClient;
 import com.netease.idate.net.api.NetHandler;
+import okhttp3.*;
 
 import java.io.IOException;
 import java.util.Map;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * Created by daisongsong on 16-7-25.
@@ -34,8 +28,10 @@ public class OkHttpNetClient extends NetClient {
             requestBody = sb.substring(0, sb.length() - 1);
         }
 
+        String fullUrl = requestBody == null || requestBody.length() == 0 ? url : url + requestBody;
+
         Request request = new Request.Builder()
-                .url(url + requestBody)
+                .url(fullUrl)
                 .method("GET", null)
                 .build();
         enqueueRequest(request, handler);
@@ -49,7 +45,7 @@ public class OkHttpNetClient extends NetClient {
 
         RequestBody body = null;
         for (Map.Entry<String, Object> e : params.entrySet()) {
-            
+
         }
 
 
