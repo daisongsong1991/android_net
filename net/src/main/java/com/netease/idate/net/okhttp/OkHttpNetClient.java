@@ -5,6 +5,8 @@ import com.netease.idate.net.api.NetHandler;
 import okhttp3.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,7 +16,18 @@ public class OkHttpNetClient extends NetClient {
     private OkHttpClient mOkHttpClient;
 
     public OkHttpNetClient() {
-        mOkHttpClient = new OkHttpClient();
+        mOkHttpClient = new OkHttpClient.Builder()
+                .cookieJar(new CookieJar() {
+                    @Override
+                    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                        System.out.println("CookieJar url=" + url + ",cookies=" + cookies);
+                    }
+
+                    @Override
+                    public List<Cookie> loadForRequest(HttpUrl url) {
+                        return new ArrayList<Cookie>();
+                    }
+                }).build();
     }
 
     @Override
