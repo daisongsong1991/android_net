@@ -48,7 +48,8 @@ public class OkHttpNetClient extends NetClient {
                         }
                         return cookies;
                     }
-                }).build();
+                })
+                .build();
     }
 
     @Override
