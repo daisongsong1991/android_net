@@ -6,6 +6,7 @@ import okhttp3.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,14 +19,34 @@ public class OkHttpNetClient extends NetClient {
     public OkHttpNetClient() {
         mOkHttpClient = new OkHttpClient.Builder()
                 .cookieJar(new CookieJar() {
+                    private Map<String, Map<String, Cookie>> mCookieMap = new HashMap<String, Map<String, Cookie>>();
+
                     @Override
                     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
                         System.out.println("CookieJar url=" + url + ",cookies=" + cookies);
+                        if (cookies != null) {
+                            Map<String, Cookie> map = mCookieMap.get(url.host());
+                            if (map == null) {
+                                map = new HashMap<String, Cookie>();
+                                mCookieMap.put(url.host(), map);
+                            }
+                            for (Cookie cookie : cookies) {
+                                map.put(cookie.name(), cookie);
+                            }
+                        }
+
                     }
 
                     @Override
                     public List<Cookie> loadForRequest(HttpUrl url) {
-                        return new ArrayList<Cookie>();
+                        List<Cookie> cookies = new ArrayList<Cookie>();
+                        Map<String, Cookie> map = mCookieMap.get(url.host());
+                        if (map != null) {
+                            for (Map.Entry<String, Cookie> entry : map.entrySet()) {
+                                cookies.add(entry.getValue());
+                            }
+                        }
+                        return cookies;
                     }
                 }).build();
     }
