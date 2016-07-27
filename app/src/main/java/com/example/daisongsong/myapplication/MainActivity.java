@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                mNetClient.get("http://www.163.com", null, new NetHandler() {
+                mNetClient.get("http://10.250.22.52:8080", null, new NetHandler() {
                     @Override
                     public void onResponse(int httpCode, final byte[] body) {
                         mTextViewContent.post(new Runnable() {

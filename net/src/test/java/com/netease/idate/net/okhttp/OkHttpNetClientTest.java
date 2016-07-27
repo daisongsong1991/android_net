@@ -66,8 +66,7 @@ public class OkHttpNetClientTest {
                 System.out.println("code=" + httpCode + ",message=" + message);
             }
         });
-        mNetClient.cancel(tag);
-        Thread.sleep(2_000L);
+        Thread.sleep(2_000_000L);
     }
 
     @Test
