@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.netease.idate.net.api.HttpRequest;
+import com.netease.idate.net.api.HttpResponse;
 import com.netease.idate.net.api.NetClient;
 import com.netease.idate.net.api.NetHandler;
 import com.netease.idate.net.api.cookie.impl.SharePreferenceCookieStore;
@@ -26,34 +28,37 @@ public class MainActivity extends Activity {
         findViewById(R.id.mButtonTestSaveCookie).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mNetClient.get(BASE_URL + "/set_cookie", null, new NetHandler() {
-                    @Override
-                    public void onResponse(int httpCode, byte[] body) {
-                        setContentText(new String(body));
-                    }
+                mNetClient.enqueue(
+                        new HttpRequest.Builder().url(BASE_URL + "/set_cookie").build(),
+                        new NetHandler() {
+                            @Override
+                            public void onResponse(HttpResponse response) {
+                                setContentText(new String(response.getData()));
+                            }
 
-                    @Override
-                    public void onFailure(int httpCode, String message) {
-                        setContentText(message);
-                    }
-                });
+                            @Override
+                            public void onFailure(HttpResponse response) {
+                                setContentText(response.getException().getMessage());
+                            }
+                        });
             }
         });
 
         findViewById(R.id.mButtonTestUseCookie).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mNetClient.get(BASE_URL + "/use_cookie", null, new NetHandler() {
-                    @Override
-                    public void onResponse(int httpCode, byte[] body) {
-                        setContentText(new String(body));
-                    }
+                mNetClient.enqueue(new HttpRequest.Builder().url(BASE_URL + "/use_cookie").build(),
+                        new NetHandler() {
+                            @Override
+                            public void onResponse(HttpResponse response) {
+                                setContentText(new String(response.getData()));
+                            }
 
-                    @Override
-                    public void onFailure(int httpCode, String message) {
-                        setContentText(message);
-                    }
-                });
+                            @Override
+                            public void onFailure(HttpResponse response) {
+                                setContentText(response.getException().getMessage());
+                            }
+                        });
             }
         });
 

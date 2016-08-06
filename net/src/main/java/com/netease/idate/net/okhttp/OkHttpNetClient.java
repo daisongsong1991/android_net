@@ -1,12 +1,13 @@
 package com.netease.idate.net.okhttp;
 
+import com.netease.idate.net.api.HttpRequest;
+import com.netease.idate.net.api.HttpResponse;
 import com.netease.idate.net.api.NetClient;
 import com.netease.idate.net.api.NetHandler;
 import com.netease.idate.net.api.cookie.CookieStore;
 import com.netease.idate.net.okhttp.cookie.CookieJarAdapter;
 
 import java.io.IOException;
-import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -27,39 +28,6 @@ public class OkHttpNetClient implements NetClient {
     }
 
     @Override
-    public Object get(String url, Map<String, Object> params, NetHandler handler) {
-        Request request = mRequestFactory.createGetRequest(url, params);
-        return enqueueRequest(request, handler);
-    }
-
-    @Override
-    public Object post(String url, Map<String, Object> params, NetHandler handler) {
-        if (params == null || params.isEmpty()) {
-            throw new RuntimeException("method POST must have Params");
-        }
-
-        Request request = mRequestFactory.createPostRequest(url, params);
-
-        return enqueueRequest(request, handler);
-    }
-
-    private Call enqueueRequest(Request request, final NetHandler handler) {
-        Call call = mOkHttpClient.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                handler.onFailure(e.hashCode(), e.getMessage());
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                handler.onResponse(response.code(), response.body().bytes());
-            }
-        });
-        return call;
-    }
-
-    @Override
     public void cancel(Object tag) {
         if (tag != null && tag instanceof Call) {
             Call call = (Call) tag;
@@ -75,4 +43,51 @@ public class OkHttpNetClient implements NetClient {
         OkHttpClient.Builder builder = mOkHttpClient.newBuilder().cookieJar(adapter);
         mOkHttpClient = builder.build();
     }
+
+    @Override
+    public Object enqueue(HttpRequest request, final NetHandler handler) {
+        Request okRequest = mRequestFactory.createRequest(request);
+        Call call = mOkHttpClient.newCall(okRequest);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                HttpResponse httpResponse = new HttpResponse.Builder()
+                        .code(HttpResponse.CODE_NOT_FOUND)
+                        .exception(e)
+                        .build();
+                handler.onFailure(httpResponse);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                HttpResponse.Builder builder = new HttpResponse.Builder();
+                builder.code(response.code())
+                        .data(response.body().bytes());
+                HttpResponse httpResponse = builder.build();
+                handler.onResponse(httpResponse);
+            }
+        });
+        return call;
+    }
+
+    @Override
+    public HttpResponse execute(HttpRequest httpRequest) {
+        HttpResponse httpResponse = null;
+        Request okRequest = mRequestFactory.createRequest(httpRequest);
+        try {
+            Response response = mOkHttpClient.newCall(okRequest).execute();
+            HttpResponse.Builder builder = new HttpResponse.Builder();
+            builder.code(response.code())
+                    .data(response.body().bytes());
+            httpResponse = builder.build();
+        } catch (IOException e) {
+            e.printStackTrace();
+            httpResponse = new HttpResponse.Builder()
+                    .code(HttpResponse.CODE_NOT_FOUND)
+                    .exception(e)
+                    .build();
+        }
+        return httpResponse;
+    }
+
 }

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CookieStore {
 
-    void add(URI uri,HttpCookie cookie);
+    void add(URI uri, HttpCookie cookie);
 
     List<HttpCookie> get(URI uri);
 }

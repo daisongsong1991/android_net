@@ -30,13 +30,13 @@ public class CookieConverter {
                 .name(httpCookie.getName())
                 .value(httpCookie.getValue())
                 .expiresAt(httpCookie.getExpiresAt());
-        if(httpCookie.isHostOnly()){
+        if (httpCookie.isHostOnly()) {
             builder.hostOnlyDomain(httpCookie.getDomain());
         }
-        if(httpCookie.isHttpOnly()){
+        if (httpCookie.isHttpOnly()) {
             builder.httpOnly();
         }
-        if(httpCookie.isSecure()){
+        if (httpCookie.isSecure()) {
             builder.secure();
         }
         return builder.build();

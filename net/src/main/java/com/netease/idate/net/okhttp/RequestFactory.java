@@ -1,5 +1,7 @@
 package com.netease.idate.net.okhttp;
 
+import com.netease.idate.net.api.HttpRequest;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.Map;
@@ -22,7 +24,22 @@ public class RequestFactory {
         return RequestFactoryInstance.INSTANCE;
     }
 
-    public Request createGetRequest(String url, Map<String, Object> params) {
+    public Request createRequest(HttpRequest httpRequest) {
+        Request request = null;
+        switch (httpRequest.getMethod()) {
+            case HttpRequest.GET:
+                request = createGetRequest(httpRequest.getUrl(), httpRequest.getParams());
+                break;
+            case HttpRequest.POST:
+                request = createPostRequest(httpRequest.getUrl(), httpRequest.getParams());
+                break;
+            default:
+                break;
+        }
+        return request;
+    }
+
+    Request createGetRequest(String url, Map<String, Object> params) {
         String requestBody = null;
         if (params != null) {
             StringBuilder sb = new StringBuilder("?");
@@ -41,7 +58,7 @@ public class RequestFactory {
         return request;
     }
 
-    public Request createPostRequest(String url, Map<String, Object> params) {
+    Request createPostRequest(String url, Map<String, Object> params) {
         RequestBody body = createRequestBody(params);
 
         Request request = new Request.Builder()
@@ -87,6 +104,6 @@ public class RequestFactory {
     }
 
     private static final class RequestFactoryInstance {
-        public static final RequestFactory INSTANCE = new RequestFactory();
+        private static final RequestFactory INSTANCE = new RequestFactory();
     }
 }

@@ -5,7 +5,7 @@ package com.netease.idate.net.api;
  */
 public interface NetHandler {
 
-    void onResponse(int httpCode, byte[] body);
+    void onResponse(HttpResponse response);
 
-    void onFailure(int httpCode, String message);
+    void onFailure(HttpResponse response);
 }
