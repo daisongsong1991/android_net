@@ -1,27 +1,19 @@
 package com.netease.idate.net.api;
 
+import com.netease.idate.net.api.cookie.CookieStore;
+
 import java.util.Map;
 
 /**
  * Created by daisongsong on 16-7-25.
  */
-public class NetClient {
+public interface NetClient {
 
-    /**
-     * @param url
-     * @param params
-     * @param handler
-     * @return object is use to cancel the request
-     */
-    public Object get(String url, Map<String, Object> params, NetHandler handler) {
-        return null;
-    }
+    Object get(String url, Map<String, Object> params, NetHandler handler);
 
-    public Object post(String url, Map<String, Object> params, NetHandler handler) {
-        return null;
-    }
+    Object post(String url, Map<String, Object> params, NetHandler handler);
 
-    public void cancel(Object tag) {
+    void cancel(Object tag);
 
-    }
+    void setCookieStore(CookieStore cookieStore);
 }

@@ -8,35 +8,26 @@
               android:paddingRight="@dimen/activity_horizontal_margin"
               android:paddingTop="@dimen/activity_vertical_margin">
 
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World!"/>
-
-    <TextView
-            android:id="@+id/mTextViewTest"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"/>
+    <Button
+        android:id="@+id/mButtonTestSaveCookie"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="mButtonTestSaveCookie"/>
 
     <Button
-            android:id="@+id/mButtonNet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Test OkHttp"/>
-    <Button
-            android:id="@+id/mButtonTestPost"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Test Post"/>
+        android:id="@+id/mButtonTestUseCookie"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="mButtonTestUseCookie"/>
 
-    <ScrollView android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <TextView
-                android:id="@+id/mTextViewContent"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+            android:id="@+id/mTextViewContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </ScrollView>
 
 </LinearLayout>

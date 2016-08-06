@@ -2,18 +2,14 @@ package com.netease.idate.net.okhttp;
 
 import com.netease.idate.net.api.NetClient;
 import com.netease.idate.net.api.NetHandler;
+import com.netease.idate.net.api.cookie.CookieStore;
+import com.netease.idate.net.okhttp.cookie.CookieJarAdapter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.Cookie;
-import okhttp3.CookieJar;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -21,45 +17,13 @@ import okhttp3.Response;
 /**
  * Created by daisongsong on 16-7-25.
  */
-public class OkHttpNetClient extends NetClient {
+public class OkHttpNetClient implements NetClient {
     private OkHttpClient mOkHttpClient;
 
     private RequestFactory mRequestFactory = RequestFactory.getInstance();
 
     public OkHttpNetClient() {
-        mOkHttpClient = new OkHttpClient.Builder()
-                .cookieJar(new CookieJar() {
-                    private Map<String, Map<String, Cookie>> mCookieMap = new HashMap<String, Map<String, Cookie>>();
-
-                    @Override
-                    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                        System.out.println("CookieJar url=" + url + ",cookies=" + cookies);
-                        if (cookies != null) {
-                            Map<String, Cookie> map = mCookieMap.get(url.host());
-                            if (map == null) {
-                                map = new HashMap<String, Cookie>();
-                                mCookieMap.put(url.host(), map);
-                            }
-                            for (Cookie cookie : cookies) {
-                                map.put(cookie.name(), cookie);
-                            }
-                        }
-
-                    }
-
-                    @Override
-                    public List<Cookie> loadForRequest(HttpUrl url) {
-                        List<Cookie> cookies = new ArrayList<Cookie>();
-                        Map<String, Cookie> map = mCookieMap.get(url.host());
-                        if (map != null) {
-                            for (Map.Entry<String, Cookie> entry : map.entrySet()) {
-                                cookies.add(entry.getValue());
-                            }
-                        }
-                        return cookies;
-                    }
-                })
-                .build();
+        mOkHttpClient = new OkHttpClient.Builder().build();
     }
 
     @Override
@@ -103,5 +67,12 @@ public class OkHttpNetClient extends NetClient {
                 call.cancel();
             }
         }
+    }
+
+    @Override
+    public void setCookieStore(CookieStore cookieStore) {
+        CookieJarAdapter adapter = new CookieJarAdapter(cookieStore);
+        OkHttpClient.Builder builder = mOkHttpClient.newBuilder().cookieJar(adapter);
+        mOkHttpClient = builder.build();
     }
 }
