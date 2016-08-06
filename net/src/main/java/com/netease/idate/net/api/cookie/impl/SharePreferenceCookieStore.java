@@ -54,7 +54,15 @@ public class SharePreferenceCookieStore implements CookieStore {
         }
 
         cookieMap.put(cookie.getName(), cookie);
-        mSharedPreferences.edit().putString(generateSPKey(cookie), CookieUtil.httpCookieToString(cookie)).apply();
+        persistentIfNeeded(cookie);
+    }
+
+    private void persistentIfNeeded(HttpCookie cookie) {
+        if (cookie.isPersistent()) {
+            mSharedPreferences.edit().putString(generateSPKey(cookie), CookieUtil.httpCookieToString(cookie)).apply();
+        } else {
+            mSharedPreferences.edit().remove(generateSPKey(cookie)).apply();
+        }
     }
 
     @Override
