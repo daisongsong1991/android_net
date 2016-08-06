@@ -7,18 +7,18 @@ import com.netease.idate.net.api.cookie.CookieStore;
 import com.netease.idate.net.api.cookie.HttpCookie;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by daisongsong on 16/8/6.
  */
 
 public class SharePreferenceCookieStore implements CookieStore {
-    private Map<String, Map<String, HttpCookie>> mMap = new HashMap<>();
+    private Map<String, Map<String, HttpCookie>> mMap = new ConcurrentHashMap<>();
     private SharedPreferences mSharedPreferences;
 
     public SharePreferenceCookieStore(Context context) {
@@ -37,7 +37,7 @@ public class SharePreferenceCookieStore implements CookieStore {
 
                 Map<String, HttpCookie> cookieMap = mMap.get(domain);
                 if (cookieMap == null) {
-                    cookieMap = new HashMap<>();
+                    cookieMap = new ConcurrentHashMap<>();
                     mMap.put(domain, cookieMap);
                 }
                 cookieMap.put(name, cookie);
@@ -49,7 +49,7 @@ public class SharePreferenceCookieStore implements CookieStore {
     public void add(URI uri, HttpCookie cookie) {
         Map<String, HttpCookie> cookieMap = mMap.get(uri.getHost());
         if (cookieMap == null) {
-            cookieMap = new HashMap<>();
+            cookieMap = new ConcurrentHashMap<>();
             mMap.put(uri.getHost(), cookieMap);
         }
 
