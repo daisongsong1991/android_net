@@ -13,6 +13,8 @@ import com.netease.idate.net.api.NetHandler;
 import com.netease.idate.net.api.cookie.impl.SharePreferenceCookieStore;
 import com.netease.idate.net.okhttp.OkHttpNetClient;
 
+import java.io.UnsupportedEncodingException;
+
 public class MainActivity extends Activity {
     private static final String BASE_URL = "http://192.168.31.120:8080";
     private TextView mTextViewContent;
@@ -37,11 +39,17 @@ public class MainActivity extends Activity {
                                         .addHeader("HEADER1", "header1")
                                         .addHeader("CLIENT_TIME", String.valueOf(System.currentTimeMillis()))
                                         .build())
+                                .addParams("params1", "English")
+                                .addParams("params2", "中文")
                                 .build(),
                         new NetHandler() {
                             @Override
                             public void onResponse(HttpResponse response) {
-                                setContentText(new String(response.getData()));
+                                try {
+                                    setContentText(new String(response.getData(), "UTF-8"));
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
                             }
 
                             @Override
@@ -62,11 +70,18 @@ public class MainActivity extends Activity {
                                         .addHeader("CLIENT_TIME", String.valueOf(System.currentTimeMillis()))
                                         .build())
                                 .url(BASE_URL + "/use_cookie")
+                                .addParams("params1", "网络")
+                                .addParams("params2", "安卓")
+                                .method(HttpRequest.POST)
                                 .build(),
                         new NetHandler() {
                             @Override
                             public void onResponse(HttpResponse response) {
-                                setContentText(new String(response.getData()));
+                                try {
+                                    setContentText(new String(response.getData(), "UTF-8"));
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
                             }
 
                             @Override

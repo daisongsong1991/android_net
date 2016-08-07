@@ -5,6 +5,8 @@ import com.netease.idate.net.api.HttpRequest;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 
 import okhttp3.FormBody;
@@ -16,7 +18,7 @@ import okhttp3.RequestBody;
  * Created by daisongsong on 16-8-5.
  */
 class RequestFactory {
-
+    private static String CHARSET = "UTF-8";
 
     private RequestFactory() {
     }
@@ -49,7 +51,12 @@ class RequestFactory {
         if (params != null) {
             StringBuilder sb = new StringBuilder("?");
             for (Map.Entry<String, Object> e : params.entrySet()) {
-                sb.append(String.format("%s=%s&", e.getKey(), String.valueOf(e.getValue())));
+                try {
+                    String value = URLEncoder.encode(String.valueOf(e.getValue()), CHARSET);
+                    sb.append(String.format("%s=%s&", e.getKey(), value));
+                } catch (UnsupportedEncodingException e1) {
+                    e1.printStackTrace();
+                }
             }
             requestBody = sb.substring(0, sb.length() - 1);
         }
@@ -65,7 +72,7 @@ class RequestFactory {
     }
 
     private Request createPostRequest(HttpRequest httpRequest) {
-        RequestBody body = createRequestBody(httpRequest.getParams());
+        RequestBody body = createPostRequestBody(httpRequest.getParams());
 
         okhttp3.Headers okHeaders = makeHeaders(httpRequest.getHeaders());
 
@@ -76,7 +83,7 @@ class RequestFactory {
                 .build();
     }
 
-    private RequestBody createRequestBody(Map<String, Object> params) {
+    private RequestBody createPostRequestBody(Map<String, Object> params) {
         boolean hasMultiData = false;
         RequestBody body = null;
         MultipartBody.Builder builder = new MultipartBody.Builder();
@@ -95,7 +102,7 @@ class RequestFactory {
                 if (formBuilder == null) {
                     formBuilder = new FormBody.Builder();
                 }
-                formBuilder.add(key, String.valueOf(value));
+                formBuilder.addEncoded(key, String.valueOf(value));
             }
         }
 
