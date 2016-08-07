@@ -10,6 +10,7 @@ import com.netease.idate.net.api.HttpRequest;
 import com.netease.idate.net.api.HttpResponse;
 import com.netease.idate.net.api.NetClient;
 import com.netease.idate.net.api.NetHandler;
+import com.netease.idate.net.api.RequestParams;
 import com.netease.idate.net.api.cookie.impl.SharePreferenceCookieStore;
 import com.netease.idate.net.okhttp.OkHttpNetClient;
 
@@ -34,13 +35,11 @@ public class MainActivity extends Activity {
                 mNetClient.enqueue(
                         new HttpRequest.Builder()
                                 .url(BASE_URL + "/set_cookie")
-                                .headers(new Headers.Builder()
-                                        .addHeader("HEADER1", "header")
-                                        .addHeader("HEADER1", "header1")
-                                        .addHeader("CLIENT_TIME", String.valueOf(System.currentTimeMillis()))
-                                        .build())
-                                .addParams("params1", "English")
-                                .addParams("params2", "中文")
+                                .addHeader("HEADER1", "header")
+                                .addHeader("HEADER1", "header1")
+                                .addHeader("CLIENT_TIME", String.valueOf(System.currentTimeMillis()))
+                                .addParam("params1", "English")
+                                .addParam("params2", "中文")
                                 .build(),
                         new NetHandler() {
                             @Override
@@ -70,8 +69,10 @@ public class MainActivity extends Activity {
                                         .addHeader("CLIENT_TIME", String.valueOf(System.currentTimeMillis()))
                                         .build())
                                 .url(BASE_URL + "/use_cookie")
-                                .addParams("params1", "网络")
-                                .addParams("params2", "安卓")
+                                .params(new RequestParams.Builder()
+                                        .addParam("params1", "网络")
+                                        .addParam("params2", "安卓")
+                                        .build())
                                 .method(HttpRequest.POST)
                                 .build(),
                         new NetHandler() {

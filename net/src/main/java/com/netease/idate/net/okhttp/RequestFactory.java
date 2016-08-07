@@ -2,17 +2,23 @@ package com.netease.idate.net.okhttp;
 
 import com.netease.idate.net.api.Headers;
 import com.netease.idate.net.api.HttpRequest;
+import com.netease.idate.net.api.RequestParams;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Map;
 
 import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.internal.Util;
+import okio.BufferedSink;
+import okio.Okio;
+import okio.Source;
 
 /**
  * Created by daisongsong on 16-8-5.
@@ -44,23 +50,10 @@ class RequestFactory {
 
     private Request createGetRequest(HttpRequest httpRequest) {
         String url = httpRequest.getUrl();
-        Map<String, Object> params = httpRequest.getParams();
         Headers headers = httpRequest.getHeaders();
 
-        String requestBody = null;
-        if (params != null) {
-            StringBuilder sb = new StringBuilder("?");
-            for (Map.Entry<String, Object> e : params.entrySet()) {
-                try {
-                    String value = URLEncoder.encode(String.valueOf(e.getValue()), CHARSET);
-                    sb.append(String.format("%s=%s&", e.getKey(), value));
-                } catch (UnsupportedEncodingException e1) {
-                    e1.printStackTrace();
-                }
-            }
-            requestBody = sb.substring(0, sb.length() - 1);
-        }
-        String fullUrl = requestBody == null || requestBody.length() == 0 ? url : url + requestBody;
+        RequestParams params = httpRequest.getParams();
+        String fullUrl = createGetUrl(url, params);
 
         okhttp3.Headers okHeaders = makeHeaders(headers);
 
@@ -69,6 +62,28 @@ class RequestFactory {
                 .method("GET", null)
                 .headers(okHeaders)
                 .build();
+    }
+
+    private String createGetUrl(String url, RequestParams params) {
+        String fullUrl = url;
+        if (params != null) {
+            String requestBody = null;
+            StringBuilder sb = new StringBuilder("?");
+
+            int size = params.size();
+            for (int i = 0; i < size; ++i) {
+                String value = null;
+                try {
+                    value = URLEncoder.encode(String.valueOf(params.getValue(i)), CHARSET);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                sb.append(String.format("%s=%s&", params.getName(i), value));
+            }
+            requestBody = sb.substring(0, sb.length() - 1);
+            fullUrl = requestBody == null || requestBody.length() == 0 ? url : url + requestBody;
+        }
+        return fullUrl;
     }
 
     private Request createPostRequest(HttpRequest httpRequest) {
@@ -83,39 +98,56 @@ class RequestFactory {
                 .build();
     }
 
-    private RequestBody createPostRequestBody(Map<String, Object> params) {
-        boolean hasMultiData = false;
-        RequestBody body = null;
-        MultipartBody.Builder builder = new MultipartBody.Builder();
-        FormBody.Builder formBuilder = null;
+    private RequestBody createPostRequestBody(RequestParams params) {
+        int size = params == null ? 0 : params.size();
+        boolean hasMultiPart = params != null && params.hasMultiPartData();
+        if (hasMultiPart) {
+            MultipartBody.Builder builder = new MultipartBody.Builder();
+            for (int i = 0; i < size; i++) {
+                String name = params.getName(i);
+                Object value = params.getValue(i);
+                if (value instanceof File) {
+                    builder.addFormDataPart(name,
+                            ((File) value).getAbsolutePath(),
+                            RequestBody.create(MediaType.parse("multipart/form-data"), (File) value));
+                } else if (value instanceof InputStream) {
+                    final InputStream inputStream = (InputStream) value;
+                    builder.addFormDataPart(name, inputStream.toString(), new RequestBody() {
+                        @Override
+                        public MediaType contentType() {
+                            return MediaType.parse("multipart/form-data");
+                        }
 
-        for (Map.Entry<String, Object> e : params.entrySet()) {
-            Object value = e.getValue();
-            String key = e.getKey();
-            if (value instanceof File) {
-                // TODO: 16-7-27
-                hasMultiData = true;
-            } else if (value instanceof InputStream) {
-                // TODO: 16-7-27
-                hasMultiData = true;
-            } else {
-                if (formBuilder == null) {
-                    formBuilder = new FormBody.Builder();
+                        @Override
+                        public long contentLength() throws IOException {
+                            return inputStream.available();
+                        }
+
+                        @Override
+                        public void writeTo(BufferedSink sink) throws IOException {
+                            Source source = null;
+                            try {
+                                source = Okio.source(inputStream);
+                                sink.writeAll(source);
+                            } finally {
+                                Util.closeQuietly(source);
+                            }
+                        }
+                    });
+                } else {
+                    builder.addFormDataPart(name, String.valueOf(value));
                 }
-                formBuilder.add(key, String.valueOf(value));
             }
-        }
-
-        if (formBuilder != null) {
-            if (hasMultiData) {
-                MultipartBody.Part part = MultipartBody.Part.create(formBuilder.build());
-                builder.addPart(part);
-                body = builder.build();
-            } else {
-                body = formBuilder.build();
+            return builder.build();
+        } else {
+            FormBody.Builder formBuilder = new FormBody.Builder();
+            for (int i = 0; i < size; i++) {
+                String name = params.getName(i);
+                Object value = params.getValue(i);
+                formBuilder.add(name, String.valueOf(value));
             }
+            return formBuilder.build();
         }
-        return body;
     }
 
     private okhttp3.Headers makeHeaders(Headers headers) {

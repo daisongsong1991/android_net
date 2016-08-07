@@ -18,6 +18,28 @@ public class Headers {
         return mNameValues;
     }
 
+    public int size() {
+        int size = mNameValues == null ? 0 : mNameValues.length;
+        size /= 2;
+        return size;
+    }
+
+    public String getName(int index) {
+        index = index * 2;
+        if (mNameValues == null || index >= mNameValues.length) {
+            return null;
+        }
+        return mNameValues[index];
+    }
+
+    public String getValue(int index) {
+        index = index * 2 + 1;
+        if (mNameValues == null || index >= mNameValues.length) {
+            return null;
+        }
+        return mNameValues[index];
+    }
+
     public static class Builder {
         private List<String> mNameValues = new ArrayList<>();
 

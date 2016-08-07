@@ -4,8 +4,6 @@ import android.support.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by daisongsong on 16/8/6.
@@ -16,8 +14,7 @@ public class HttpRequest {
     public static final int POST = 1;
     private String mUrl;
     private int mMethod;
-    private Map<String, Object> mParams;
-
+    private RequestParams mParams;
     private Headers mHeaders;
 
     private HttpRequest() {
@@ -36,7 +33,7 @@ public class HttpRequest {
         return mHeaders;
     }
 
-    public Map<String, Object> getParams() {
+    public RequestParams getParams() {
         return mParams;
     }
 
@@ -51,8 +48,8 @@ public class HttpRequest {
     public static final class Builder {
         private String mUrl;
         private int mMethod;
-        private Map<String, Object> mParams;
-        private Headers mHeaders;
+        private RequestParams.Builder mParamsBuilder;
+        private Headers.Builder mHeadersBuilder;
 
         public Builder() {
             mMethod = GET;
@@ -63,11 +60,19 @@ public class HttpRequest {
             return this;
         }
 
-        public Builder addParams(String key, Object value) {
-            if (mParams == null) {
-                mParams = new HashMap<>();
+        public Builder addParam(String name, Object value) {
+            if (mParamsBuilder == null) {
+                mParamsBuilder = new RequestParams.Builder();
             }
-            mParams.put(key, value);
+            mParamsBuilder.addParam(name, value);
+            return this;
+        }
+
+        public Builder params(RequestParams params) {
+            int size = params == null ? 0 : params.size();
+            for (int i = 0; i < size; i++) {
+                addParam(params.getName(i), params.getValue(i));
+            }
             return this;
         }
 
@@ -77,7 +82,18 @@ public class HttpRequest {
         }
 
         public Builder headers(Headers headers) {
-            this.mHeaders = headers;
+            int size = headers == null ? 0 : headers.size();
+            for (int i = 0; i < size; i++) {
+                addHeader(headers.getName(i), headers.getValue(i));
+            }
+            return this;
+        }
+
+        public Builder addHeader(String name, String value) {
+            if (mHeadersBuilder == null) {
+                mHeadersBuilder = new Headers.Builder();
+            }
+            this.mHeadersBuilder.addHeader(name, value);
             return this;
         }
 
@@ -85,8 +101,8 @@ public class HttpRequest {
             HttpRequest httpRequest = new HttpRequest();
             httpRequest.mMethod = mMethod;
             httpRequest.mUrl = mUrl;
-            httpRequest.mParams = mParams;
-            httpRequest.mHeaders = mHeaders;
+            httpRequest.mParams = mParamsBuilder == null ? null : mParamsBuilder.build();
+            httpRequest.mHeaders = mHeadersBuilder == null ? null : mHeadersBuilder.build();
             return httpRequest;
         }
     }
