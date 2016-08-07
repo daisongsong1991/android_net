@@ -20,6 +20,12 @@
         android:layout_height="40dp"
         android:text="mButtonTestUseCookie"/>
 
+    <Button
+        android:id="@+id/mButtonTestMultiPart"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="mButtonTestMultiPart"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">

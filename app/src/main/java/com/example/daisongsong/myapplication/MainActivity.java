@@ -14,6 +14,7 @@ import com.netease.idate.net.api.RequestParams;
 import com.netease.idate.net.api.cookie.impl.SharePreferenceCookieStore;
 import com.netease.idate.net.okhttp.OkHttpNetClient;
 
+import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 
 public class MainActivity extends Activity {
@@ -72,6 +73,41 @@ public class MainActivity extends Activity {
                                 .params(new RequestParams.Builder()
                                         .addParam("params1", "网络")
                                         .addParam("params2", "安卓")
+                                        .build())
+                                .method(HttpRequest.POST)
+                                .build(),
+                        new NetHandler() {
+                            @Override
+                            public void onResponse(HttpResponse response) {
+                                try {
+                                    setContentText(new String(response.getData(), "UTF-8"));
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(HttpResponse response) {
+                                setContentText(response.getException().getMessage());
+                            }
+                        });
+            }
+        });
+        findViewById(R.id.mButtonTestMultiPart).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ByteArrayInputStream bais = new ByteArrayInputStream("[数据流类型,stream,end]".getBytes());
+                mNetClient.enqueue(new HttpRequest.Builder()
+                                .headers(new Headers.Builder()
+                                        .addHeader("HEADER1", "header")
+                                        .addHeader("HEADER1", "header1")
+                                        .addHeader("CLIENT_TIME", String.valueOf(System.currentTimeMillis()))
+                                        .build())
+                                .url(BASE_URL + "/multipart")
+                                .params(new RequestParams.Builder()
+                                        .addParam("params1", "网络")
+                                        .addParam("params2", "安卓")
+                                        .addParam("stream", bais)
                                         .build())
                                 .method(HttpRequest.POST)
                                 .build(),
