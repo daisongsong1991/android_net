@@ -96,7 +96,7 @@ public class MainActivity extends Activity {
         findViewById(R.id.mButtonTestMultiPart).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ByteArrayInputStream bais = new ByteArrayInputStream("[数据流类型,stream,end]".getBytes());
+                ByteArrayInputStream bais = new ByteArrayInputStream("start,数据流类型,stream,end".getBytes());
                 mNetClient.enqueue(new HttpRequest.Builder()
                                 .headers(new Headers.Builder()
                                         .addHeader("HEADER1", "header")
