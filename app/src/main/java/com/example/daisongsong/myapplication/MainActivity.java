@@ -5,11 +5,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSONObject;
 import com.netease.idate.net.api.Headers;
 import com.netease.idate.net.api.HttpRequest;
 import com.netease.idate.net.api.HttpResponse;
-import com.netease.idate.net.api.JsonNetHandler;
 import com.netease.idate.net.api.NetClient;
 import com.netease.idate.net.api.NetHandler;
 import com.netease.idate.net.api.RequestParams;
@@ -158,10 +156,10 @@ public class MainActivity extends Activity {
                                         .addParam("params2", "安卓json")
                                         .build())
                                 .build(),
-                        new JsonNetHandler<Data>() {
+                        new ObjectHandler<Data>() {
 
                             @Override
-                            protected void onResponse(int httpCode, Data data) {
+                            protected void onObjectResponse(int httpCode, Data data) {
                                 setContentText("" + data);
                             }
 
@@ -186,12 +184,21 @@ public class MainActivity extends Activity {
         });
     }
 
-    public static class Data{
+    public static class Data {
         public Cookie[] cookies;
         public Map<String, List<String>> params;
         public Map<String, List<String>> header;
 
-        public static class Cookie{
+        @Override
+        public String toString() {
+            return "Data{" +
+                    "cookies=" + Arrays.toString(cookies) +
+                    ", params=" + params +
+                    ", header=" + header +
+                    '}';
+        }
+
+        public static class Cookie {
             public String name;
             public String value;
 
@@ -202,15 +209,6 @@ public class MainActivity extends Activity {
                         ", value='" + value + '\'' +
                         '}';
             }
-        }
-
-        @Override
-        public String toString() {
-            return "Data{" +
-                    "cookies=" + Arrays.toString(cookies) +
-                    ", params=" + params +
-                    ", header=" + header +
-                    '}';
         }
     }
 
