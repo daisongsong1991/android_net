@@ -50,6 +50,8 @@ public class MainActivity extends Activity {
                         new NetHandler() {
                             @Override
                             public void onResponse(HttpResponse response) {
+                                super.onResponse(response);
+
                                 try {
                                     setContentText(new String(response.getData(), "UTF-8"));
                                 } catch (UnsupportedEncodingException e) {
@@ -59,6 +61,7 @@ public class MainActivity extends Activity {
 
                             @Override
                             public void onFailure(HttpResponse response) {
+                                super.onFailure(response);
                                 setContentText(response.getException().getMessage());
                             }
                         });
@@ -84,6 +87,8 @@ public class MainActivity extends Activity {
                         new NetHandler() {
                             @Override
                             public void onResponse(HttpResponse response) {
+                                super.onResponse(response);
+
                                 try {
                                     setContentText(new String(response.getData(), "UTF-8"));
                                 } catch (UnsupportedEncodingException e) {
@@ -93,6 +98,7 @@ public class MainActivity extends Activity {
 
                             @Override
                             public void onFailure(HttpResponse response) {
+                                super.onFailure(response);
                                 setContentText(response.getException().getMessage());
                             }
                         });
@@ -119,6 +125,8 @@ public class MainActivity extends Activity {
                         new NetHandler() {
                             @Override
                             public void onResponse(HttpResponse response) {
+                                super.onResponse(response);
+
                                 try {
                                     setContentText(new String(response.getData(), "UTF-8"));
                                 } catch (UnsupportedEncodingException e) {
@@ -128,6 +136,7 @@ public class MainActivity extends Activity {
 
                             @Override
                             public void onFailure(HttpResponse response) {
+                                super.onFailure(response);
                                 setContentText(response.getException().getMessage());
                             }
                         });
@@ -158,6 +167,7 @@ public class MainActivity extends Activity {
 
                             @Override
                             public void onFailure(HttpResponse response) {
+                                super.onFailure(response);
                                 setContentText(response.getException().getMessage());
                             }
                         });

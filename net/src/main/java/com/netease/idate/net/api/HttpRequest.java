@@ -106,4 +106,14 @@ public class HttpRequest {
             return httpRequest;
         }
     }
+
+    @Override
+    public String toString() {
+        return "HttpRequest{" +
+                "mUrl='" + mUrl + '\'' +
+                ", mMethod=" + mMethod +
+                ", mParams=" + mParams +
+                ", mHeaders=" + mHeaders +
+                '}';
+    }
 }

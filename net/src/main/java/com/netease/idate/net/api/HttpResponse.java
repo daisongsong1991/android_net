@@ -1,5 +1,7 @@
 package com.netease.idate.net.api;
 
+import java.util.Arrays;
+
 /**
  * Created by daisongsong on 16/8/6.
  */
@@ -11,6 +13,8 @@ public class HttpResponse {
     private byte[] mData;
 
     private Exception mException;
+
+    private HttpRequest mHttpRequest;
 
     private HttpResponse() {
     }
@@ -27,10 +31,15 @@ public class HttpResponse {
         return mException;
     }
 
+    public HttpRequest getHttpRequest() {
+        return mHttpRequest;
+    }
+
     public static final class Builder {
         private int mCode;
         private byte[] mData;
         private Exception mException;
+        private HttpRequest mHttpRequest;
 
         public Builder() {
 
@@ -51,13 +60,28 @@ public class HttpResponse {
             return this;
         }
 
+        public Builder request(HttpRequest request){
+            this.mHttpRequest = request;
+            return this;
+        }
+
         public HttpResponse build() {
             HttpResponse response = new HttpResponse();
             response.mCode = mCode;
             response.mData = mData;
             response.mException = mException;
+            response.mHttpRequest = mHttpRequest;
             return response;
         }
+    }
 
+    @Override
+    public String toString() {
+        return "HttpResponse{" +
+                "mCode=" + mCode +
+                ", mData=" + Arrays.toString(mData) +
+                ", mException=" + mException +
+                ", mHttpRequest=" + mHttpRequest +
+                '}';
     }
 }

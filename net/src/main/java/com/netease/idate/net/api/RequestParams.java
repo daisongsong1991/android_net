@@ -3,6 +3,7 @@ package com.netease.idate.net.api;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -69,5 +70,14 @@ public class RequestParams {
                 mHasMultiPartData = true;
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "RequestParams{" +
+                "mNames=" + Arrays.toString(mNames) +
+                ", mValues=" + Arrays.toString(mValues) +
+                ", mHasMultiPartData=" + mHasMultiPartData +
+                '}';
     }
 }

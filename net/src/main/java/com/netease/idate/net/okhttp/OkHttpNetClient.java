@@ -45,7 +45,7 @@ public class OkHttpNetClient implements NetClient {
     }
 
     @Override
-    public Object enqueue(HttpRequest request, final NetHandler handler) {
+    public Object enqueue(final HttpRequest request, final NetHandler handler) {
         Request okRequest = mRequestFactory.createRequest(request);
         Call call = mOkHttpClient.newCall(okRequest);
         call.enqueue(new Callback() {
@@ -54,6 +54,7 @@ public class OkHttpNetClient implements NetClient {
                 HttpResponse httpResponse = new HttpResponse.Builder()
                         .code(HttpResponse.CODE_NOT_FOUND)
                         .exception(e)
+                        .request(request)
                         .build();
                 handler.onFailure(httpResponse);
             }
@@ -62,6 +63,7 @@ public class OkHttpNetClient implements NetClient {
             public void onResponse(Call call, Response response) throws IOException {
                 HttpResponse.Builder builder = new HttpResponse.Builder();
                 builder.code(response.code())
+                        .request(request)
                         .data(response.body().bytes());
                 HttpResponse httpResponse = builder.build();
                 handler.onResponse(httpResponse);
@@ -72,19 +74,21 @@ public class OkHttpNetClient implements NetClient {
 
     @Override
     public HttpResponse execute(HttpRequest httpRequest) {
-        HttpResponse httpResponse = null;
+        HttpResponse httpResponse;
         Request okRequest = mRequestFactory.createRequest(httpRequest);
         try {
             Response response = mOkHttpClient.newCall(okRequest).execute();
             HttpResponse.Builder builder = new HttpResponse.Builder();
             builder.code(response.code())
-                    .data(response.body().bytes());
+                    .data(response.body().bytes())
+                    .request(httpRequest);
             httpResponse = builder.build();
         } catch (IOException e) {
             e.printStackTrace();
             httpResponse = new HttpResponse.Builder()
                     .code(HttpResponse.CODE_NOT_FOUND)
                     .exception(e)
+                    .request(httpRequest)
                     .build();
         }
         return httpResponse;

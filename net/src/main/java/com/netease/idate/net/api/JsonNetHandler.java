@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
  * Created by daisongsong on 16/8/7.
  */
 
-public abstract class JsonNetHandler<T> implements NetHandler {
+public abstract class JsonNetHandler<T> extends NetHandler {
     private Type mType;
 
     public JsonNetHandler() {
@@ -28,6 +28,8 @@ public abstract class JsonNetHandler<T> implements NetHandler {
 
     @Override
     public final void onResponse(HttpResponse response) {
+        super.onResponse(response);
+
         byte[] data = response.getData();
         try {
             Object o = JSON.parseObject(new String(data, "UTF-8"), mType);
@@ -36,6 +38,7 @@ public abstract class JsonNetHandler<T> implements NetHandler {
             e.printStackTrace();
             onResponse(new HttpResponse.Builder()
                     .code(HttpResponse.CODE_JSON_ERROR)
+                    .request(response.getHttpRequest())
                     .exception(e)
                     .build());
         }

@@ -7,10 +7,6 @@ import com.netease.idate.net.api.cookie.CookieStore;
  */
 public interface NetClient {
 
-//    Object get(String url, Map<String, Object> params, NetHandler handler);
-//
-//    Object post(String url, Map<String, Object> params, NetHandler handler);
-
     void cancel(Object tag);
 
     void setCookieStore(CookieStore cookieStore);
@@ -18,4 +14,5 @@ public interface NetClient {
     Object enqueue(HttpRequest request, NetHandler handler);
 
     HttpResponse execute(HttpRequest request);
+
 }

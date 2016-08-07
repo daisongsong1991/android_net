@@ -1,6 +1,7 @@
 package com.netease.idate.net.api;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -56,4 +57,11 @@ public class Headers {
         }
     }
 
+
+    @Override
+    public String toString() {
+        return "Headers{" +
+                "mNameValues=" + Arrays.toString(mNameValues) +
+                '}';
+    }
 }

@@ -3,9 +3,13 @@ package com.netease.idate.net.api;
 /**
  * Created by daisongsong on 16-7-25.
  */
-public interface NetHandler {
+public class NetHandler {
 
-    void onResponse(HttpResponse response);
+    public void onResponse(HttpResponse response) {
+        Logger.d("NetHandler", String.valueOf(response));
+    }
 
-    void onFailure(HttpResponse response);
+    public void onFailure(HttpResponse response) {
+        Logger.d("NetHandler", String.valueOf(response));
+    }
 }
