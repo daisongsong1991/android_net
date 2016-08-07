@@ -1,5 +1,6 @@
 package com.netease.idate.net.okhttp;
 
+import com.netease.idate.net.api.Headers;
 import com.netease.idate.net.api.HttpRequest;
 
 import java.io.File;
@@ -14,24 +15,24 @@ import okhttp3.RequestBody;
 /**
  * Created by daisongsong on 16-8-5.
  */
-public class RequestFactory {
+class RequestFactory {
 
 
     private RequestFactory() {
     }
 
-    public static final RequestFactory getInstance() {
+    static RequestFactory getInstance() {
         return RequestFactoryInstance.INSTANCE;
     }
 
-    public Request createRequest(HttpRequest httpRequest) {
+    Request createRequest(HttpRequest httpRequest) {
         Request request = null;
         switch (httpRequest.getMethod()) {
             case HttpRequest.GET:
-                request = createGetRequest(httpRequest.getUrl(), httpRequest.getParams());
+                request = createGetRequest(httpRequest);
                 break;
             case HttpRequest.POST:
-                request = createPostRequest(httpRequest.getUrl(), httpRequest.getParams());
+                request = createPostRequest(httpRequest);
                 break;
             default:
                 break;
@@ -39,7 +40,11 @@ public class RequestFactory {
         return request;
     }
 
-    Request createGetRequest(String url, Map<String, Object> params) {
+    private Request createGetRequest(HttpRequest httpRequest) {
+        String url = httpRequest.getUrl();
+        Map<String, Object> params = httpRequest.getParams();
+        Headers headers = httpRequest.getHeaders();
+
         String requestBody = null;
         if (params != null) {
             StringBuilder sb = new StringBuilder("?");
@@ -48,24 +53,27 @@ public class RequestFactory {
             }
             requestBody = sb.substring(0, sb.length() - 1);
         }
-
         String fullUrl = requestBody == null || requestBody.length() == 0 ? url : url + requestBody;
 
-        Request request = new Request.Builder()
+        okhttp3.Headers okHeaders = makeHeaders(headers);
+
+        return new Request.Builder()
                 .url(fullUrl)
                 .method("GET", null)
+                .headers(okHeaders)
                 .build();
-        return request;
     }
 
-    Request createPostRequest(String url, Map<String, Object> params) {
-        RequestBody body = createRequestBody(params);
+    private Request createPostRequest(HttpRequest httpRequest) {
+        RequestBody body = createRequestBody(httpRequest.getParams());
 
-        Request request = new Request.Builder()
-                .url(url)
+        okhttp3.Headers okHeaders = makeHeaders(httpRequest.getHeaders());
+
+        return new Request.Builder()
+                .url(httpRequest.getUrl())
                 .method("POST", body)
+                .headers(okHeaders)
                 .build();
-        return request;
     }
 
     private RequestBody createRequestBody(Map<String, Object> params) {
@@ -102,6 +110,27 @@ public class RequestFactory {
         }
         return body;
     }
+
+    private okhttp3.Headers makeHeaders(Headers headers) {
+        okhttp3.Headers.Builder builder = new okhttp3.Headers.Builder();
+
+        String[] nameValueArray = headers.getNameValueArray();
+        if (nameValueArray == null || nameValueArray.length == 0) {
+            return builder.build();
+        }
+
+        int size = nameValueArray.length;
+        size = size % 2 == 0 ? size : size - 1;
+
+        for (int i = 0; i < size; i += 2) {
+            String name = nameValueArray[i];
+            String value = nameValueArray[i + 1];
+            builder.add(name, value);
+        }
+
+        return builder.build();
+    }
+
 
     private static final class RequestFactoryInstance {
         private static final RequestFactory INSTANCE = new RequestFactory();

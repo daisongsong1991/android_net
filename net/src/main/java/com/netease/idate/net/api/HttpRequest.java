@@ -18,6 +18,7 @@ public class HttpRequest {
     private int mMethod;
     private Map<String, Object> mParams;
 
+    private Headers mHeaders;
 
     private HttpRequest() {
 
@@ -29,6 +30,10 @@ public class HttpRequest {
 
     public String getUrl() {
         return mUrl;
+    }
+
+    public Headers getHeaders() {
+        return mHeaders;
     }
 
     public Map<String, Object> getParams() {
@@ -47,6 +52,7 @@ public class HttpRequest {
         private String mUrl;
         private int mMethod;
         private Map<String, Object> mParams;
+        private Headers mHeaders;
 
         public Builder() {
             mMethod = GET;
@@ -70,11 +76,17 @@ public class HttpRequest {
             return this;
         }
 
+        public Builder headers(Headers headers) {
+            this.mHeaders = headers;
+            return this;
+        }
+
         public HttpRequest build() {
             HttpRequest httpRequest = new HttpRequest();
             httpRequest.mMethod = mMethod;
             httpRequest.mUrl = mUrl;
             httpRequest.mParams = mParams;
+            httpRequest.mHeaders = mHeaders;
             return httpRequest;
         }
     }

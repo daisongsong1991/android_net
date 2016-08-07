@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.netease.idate.net.api.Headers;
 import com.netease.idate.net.api.HttpRequest;
 import com.netease.idate.net.api.HttpResponse;
 import com.netease.idate.net.api.NetClient;
@@ -29,7 +30,14 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 mNetClient.enqueue(
-                        new HttpRequest.Builder().url(BASE_URL + "/set_cookie").build(),
+                        new HttpRequest.Builder()
+                                .url(BASE_URL + "/set_cookie")
+                                .headers(new Headers.Builder()
+                                        .addHeader("HEADER1", "header")
+                                        .addHeader("HEADER1", "header1")
+                                        .addHeader("CLIENT_TIME", String.valueOf(System.currentTimeMillis()))
+                                        .build())
+                                .build(),
                         new NetHandler() {
                             @Override
                             public void onResponse(HttpResponse response) {
@@ -47,7 +55,14 @@ public class MainActivity extends Activity {
         findViewById(R.id.mButtonTestUseCookie).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mNetClient.enqueue(new HttpRequest.Builder().url(BASE_URL + "/use_cookie").build(),
+                mNetClient.enqueue(new HttpRequest.Builder()
+                                .headers(new Headers.Builder()
+                                        .addHeader("HEADER1", "header")
+                                        .addHeader("HEADER1", "header1")
+                                        .addHeader("CLIENT_TIME", String.valueOf(System.currentTimeMillis()))
+                                        .build())
+                                .url(BASE_URL + "/use_cookie")
+                                .build(),
                         new NetHandler() {
                             @Override
                             public void onResponse(HttpResponse response) {
