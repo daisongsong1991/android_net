@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.daisongsong.myapplication.handler.AsyncObjectHandler;
 import com.netease.idate.net.api.Headers;
 import com.netease.idate.net.api.HttpRequest;
 import com.netease.idate.net.api.HttpResponse;
@@ -60,7 +61,7 @@ public class MainActivity extends Activity {
                             @Override
                             public void onFailure(HttpResponse response) {
                                 super.onFailure(response);
-                                setContentText(response.getException().getMessage());
+                                setContentText(response.getException() + "");
                             }
                         });
             }
@@ -97,7 +98,7 @@ public class MainActivity extends Activity {
                             @Override
                             public void onFailure(HttpResponse response) {
                                 super.onFailure(response);
-                                setContentText(response.getException().getMessage());
+                                setContentText(response.getException() + "");
                             }
                         });
             }
@@ -135,7 +136,7 @@ public class MainActivity extends Activity {
                             @Override
                             public void onFailure(HttpResponse response) {
                                 super.onFailure(response);
-                                setContentText(response.getException().getMessage());
+                                setContentText(response.getException() + "");
                             }
                         });
             }
@@ -156,17 +157,17 @@ public class MainActivity extends Activity {
                                         .addParam("params2", "安卓json")
                                         .build())
                                 .build(),
-                        new ObjectHandler<Data>() {
+                        new AsyncObjectHandler<Data>() {
+
 
                             @Override
-                            protected void onObjectResponse(int httpCode, Data data) {
-                                setContentText("" + data);
+                            protected void onSuccess(int httpCode, Data data) {
+                                mTextViewContent.setText(String.format("httpCode=%d\ndata=%s", httpCode, data));
                             }
 
                             @Override
-                            public void onFailure(HttpResponse response) {
-                                super.onFailure(response);
-                                setContentText(response.getException().getMessage());
+                            protected void onError(HttpResponse response) {
+                                mTextViewContent.setText(response.getException() + "");
                             }
                         });
             }
