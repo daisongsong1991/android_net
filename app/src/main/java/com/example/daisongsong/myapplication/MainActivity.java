@@ -5,9 +5,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.netease.idate.net.api.Headers;
 import com.netease.idate.net.api.HttpRequest;
 import com.netease.idate.net.api.HttpResponse;
+import com.netease.idate.net.api.JsonNetHandler;
 import com.netease.idate.net.api.NetClient;
 import com.netease.idate.net.api.NetHandler;
 import com.netease.idate.net.api.RequestParams;
@@ -16,6 +18,9 @@ import com.netease.idate.net.okhttp.OkHttpNetClient;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends Activity {
     private static final String BASE_URL = "http://192.168.31.120:8080";
@@ -129,6 +134,36 @@ public class MainActivity extends Activity {
             }
         });
 
+        findViewById(R.id.mButtonTestJson).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mNetClient.enqueue(new HttpRequest.Builder()
+                                .headers(new Headers.Builder()
+                                        .addHeader("HEADER1", "header")
+                                        .addHeader("HEADER1", "header1")
+                                        .addHeader("CLIENT_TIME", String.valueOf(System.currentTimeMillis()))
+                                        .build())
+                                .url(BASE_URL + "/json")
+                                .params(new RequestParams.Builder()
+                                        .addParam("params1", "网络")
+                                        .addParam("params2", "安卓json")
+                                        .build())
+                                .build(),
+                        new JsonNetHandler<Data>() {
+
+                            @Override
+                            protected void onResponse(int httpCode, Data data) {
+                                setContentText("" + data);
+                            }
+
+                            @Override
+                            public void onFailure(HttpResponse response) {
+                                setContentText(response.getException().getMessage());
+                            }
+                        });
+            }
+        });
+
     }
 
 
@@ -139,6 +174,34 @@ public class MainActivity extends Activity {
                 mTextViewContent.setText(msg);
             }
         });
+    }
+
+    public static class Data{
+        public Cookie[] cookies;
+        public Map<String, List<String>> params;
+        public Map<String, List<String>> header;
+
+        public static class Cookie{
+            public String name;
+            public String value;
+
+            @Override
+            public String toString() {
+                return "Cookie{" +
+                        "name='" + name + '\'' +
+                        ", value='" + value + '\'' +
+                        '}';
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "Data{" +
+                    "cookies=" + Arrays.toString(cookies) +
+                    ", params=" + params +
+                    ", header=" + header +
+                    '}';
+        }
     }
 
 }

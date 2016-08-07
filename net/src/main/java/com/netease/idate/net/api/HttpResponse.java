@@ -6,6 +6,7 @@ package com.netease.idate.net.api;
 
 public class HttpResponse {
     public static final int CODE_NOT_FOUND = 404;
+    public static final int CODE_JSON_ERROR = 601;
     private int mCode;
     private byte[] mData;
 
