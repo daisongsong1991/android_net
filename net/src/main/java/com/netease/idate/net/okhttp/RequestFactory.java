@@ -102,7 +102,7 @@ class RequestFactory {
                 if (formBuilder == null) {
                     formBuilder = new FormBody.Builder();
                 }
-                formBuilder.addEncoded(key, String.valueOf(value));
+                formBuilder.add(key, String.valueOf(value));
             }
         }
 
