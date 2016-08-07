@@ -36,7 +36,7 @@ public abstract class JsonNetHandler<T> extends NetHandler {
             onResponse(response.getCode(), (T) o);
         } catch (Exception e) {
             e.printStackTrace();
-            onResponse(new HttpResponse.Builder()
+            onFailure(new HttpResponse.Builder()
                     .code(HttpResponse.CODE_JSON_ERROR)
                     .request(response.getHttpRequest())
                     .exception(e)
