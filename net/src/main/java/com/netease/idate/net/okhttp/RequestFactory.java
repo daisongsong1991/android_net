@@ -153,7 +153,7 @@ class RequestFactory {
     private okhttp3.Headers makeHeaders(Headers headers) {
         okhttp3.Headers.Builder builder = new okhttp3.Headers.Builder();
 
-        String[] nameValueArray = headers.getNameValueArray();
+        String[] nameValueArray = headers == null ? null : headers.getNameValueArray();
         if (nameValueArray == null || nameValueArray.length == 0) {
             return builder.build();
         }

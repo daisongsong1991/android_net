@@ -76,10 +76,10 @@ public class MainActivity extends Activity {
                                         .addHeader("HEADER1", "header1")
                                         .addHeader("CLIENT_TIME", String.valueOf(System.currentTimeMillis()))
                                         .build())
-                                .url(BASE_URL + "/use_cookie")
+                                .url("http://t.y.163.com/album/getphotoinfo")
                                 .params(new RequestParams.Builder()
-                                        .addParam("params1", "网络")
-                                        .addParam("params2", "安卓")
+                                        .addParam("picId", "1232323")
+                                        .addParam("userId", "323232")
                                         .build())
                                 .method(HttpRequest.POST)
                                 .build(),
