@@ -1,6 +1,7 @@
 package com.example.daisongsong.myapplication;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -173,6 +174,14 @@ public class MainActivity extends Activity {
             }
         });
 
+
+        findViewById(R.id.mButtonFullScreen).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, FullScreenActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 

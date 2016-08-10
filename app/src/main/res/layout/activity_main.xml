@@ -30,6 +30,12 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="mButtonTestJson"/>
+
+    <Button
+        android:id="@+id/mButtonFullScreen"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="mButtonFullScreen"/>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
