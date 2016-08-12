@@ -36,6 +36,14 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="mButtonFullScreen"/>
+
+
+    <Button
+        android:id="@+id/mButtonTestPermission"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:inputType="text"
+        android:text="TestPermission"/>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">

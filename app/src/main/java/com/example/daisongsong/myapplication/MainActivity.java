@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.daisongsong.myapplication.handler.AsyncObjectHandler;
+import com.example.daisongsong.myapplication.permission.PermissionTestActivity;
 import com.netease.idate.net.api.Headers;
 import com.netease.idate.net.api.HttpRequest;
 import com.netease.idate.net.api.HttpResponse;
@@ -193,6 +194,15 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, FullScreenActivity.class);
                 startActivity(intent);
+            }
+        });
+
+
+
+        findViewById(R.id.mButtonTestPermission).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, PermissionTestActivity.class));
             }
         });
     }
