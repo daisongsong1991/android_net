@@ -3,7 +3,11 @@ package com.example.daisongsong.myapplication;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.daisongsong.myapplication.handler.AsyncObjectHandler;
@@ -30,7 +34,16 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        View view = LayoutInflater.from(this).inflate(R.layout.activity_main, null);
+        FrameLayout frameLayout = new FrameLayout(this);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        lp.gravity = Gravity.BOTTOM;
+        lp.height = getResources().getDisplayMetrics().heightPixels - PhoneUtils.getStatusBarHeight(this);
+        view.setLayoutParams(lp);
+        frameLayout.addView(view);
+
+        setContentView(frameLayout);
 
         mNetClient.setCookieStore(new SharePreferenceCookieStore(getApplicationContext()));
         mTextViewContent = (TextView) findViewById(R.id.mTextViewContent);
